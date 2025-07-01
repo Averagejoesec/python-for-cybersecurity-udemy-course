@@ -1,26 +1,29 @@
-# When clients connect they should first send a password that the user on the client types.
-
-# Your server should check to ensure that this password matches.
-
-# If the password does not match then close the connection after sending a message stating 'access denied'
-
-# if the password DOES match, allow that client access to chat with the server like in the example I showed in the lectures with a few additional features.
-
-# When a message is displayed on the client the message should be 'SERVER>>' + msg and vice versa
-
-# If the client sends 'end' to the server, the connection should end
-
 import socket
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# host and port
+# IP and host that we want to connect to
 host = '127.0.0.1'
 port = 9002
 
-# setup to take connections
-s.bind((host, port))
-s.listen()
-conn, addr = s.accept()
+s.connect((host, port))
 
-print(f"Connection received from {addr}")
+password_rcvd = s.recv(1024).decode()
+
+password = 'password123'
+if password_rcvd == password:
+    while True:
+        data = input("Enter a msg: ")
+        s.sendall(str.encode(f"CLEINT>> {data}"))
+        msg = s.recv(1024).decode()
+        if not msg:
+            break
+        elif 'end' in msg:
+            s.close()
+            print('Connection ended.')
+            break
+        else:
+            print(msg)
+else:
+    s.close()
+    print("Incorrect password, connection closed.")
