@@ -26,4 +26,4 @@ if password_rcvd == password:
             print(msg)
 else:
     s.close()
-    print("Incorrect password, connection closed.")
+    print("Incorrect password, access denied.")
